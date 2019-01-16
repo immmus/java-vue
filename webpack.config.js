@@ -11,7 +11,10 @@ module.exports = {
         port: 8000,
         allowedHosts: [
             'localhost:9000'
-        ]
+        ],
+        //stats и clientLogLevel убирают всю информацию из консоли, кроме ошибок.
+        stats: 'errors-only',
+        clientLogLevel: 'error'
     },
     module: {
         rules: [

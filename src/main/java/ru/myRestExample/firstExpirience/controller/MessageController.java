@@ -3,6 +3,8 @@ package ru.myRestExample.firstExpirience.controller;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.*;
 import ru.myRestExample.firstExpirience.domain.Message;
 import ru.myRestExample.firstExpirience.domain.Views;
@@ -69,5 +71,15 @@ private Map<String, String> getMessage(@PathVariable String id) {
     @DeleteMapping("{id}")
     public void delete(@PathVariable("id") Message message){
         messageRepository.delete(message);
+    }
+
+    //метод для работы с веб сокетами.Он дублирует поведение контроллера в плане создания и обновления сообзений.
+    @MessageMapping("/changeMessage") //Отечает за получение сообщений через веб сокеты.
+    // Клиентские приложения на этот мапинг(/changeMessage) могут отправлять сообщения, которые будут востанавливаться в обьект Message
+    @SendTo("/topic/activity") //Отвечает за то - в какой топик мы будем складывать ответы
+    //Топик это такой канал, куда подписываются сервевы и клиенты.
+    // Топиков может быть несколько и они отвечают за разные задачи.
+    public Message change(Message message) {
+        return messageRepository.save(message);
     }
 }
