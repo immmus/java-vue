@@ -3,6 +3,8 @@ package ru.myRestExample.firstExpirience.domain;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
@@ -10,6 +12,8 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table
+@Getter
+@Setter
 @ToString(of = {"id", "text"})
 @EqualsAndHashCode(of = "id")
 public class Message {
@@ -21,7 +25,8 @@ public class Message {
     // показывать(Например в консоли браузера), Views.IdName.class - будет показывать только ID и Name
     @JsonView(Views.IdName.class)
     private String text;
-
+    @JsonView(Views.IdName.class)
+    private String author;
     @Column(updatable = false)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", locale = "English")
     // А Views.FullMessage.class - будет показывать все свои поля и поля класса от которых он унаследован
@@ -32,27 +37,4 @@ public class Message {
     @JsonView(Views.FullMessage.class)
     private LocalDateTime creationDate;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
-    }
-
-    public LocalDateTime getCreationDate() {
-        return creationDate;
-    }
-
-    public void setCreationDate(LocalDateTime creationDate) {
-        this.creationDate = creationDate;
-    }
 }

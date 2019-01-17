@@ -1,7 +1,7 @@
 <template>
     <v-card class="my-2">
         <v-card-text primary-title>
-            <i>({{ message.id }})</i> {{ message.text }}
+            <i>({{ message.author }})</i> {{ message.text }}
         </v-card-text>
 
         <v-layout align-center justify-end>

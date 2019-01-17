@@ -3,31 +3,36 @@ package ru.myRestExample.firstExpirience.controller;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import ru.myRestExample.firstExpirience.domain.Message;
+import ru.myRestExample.firstExpirience.domain.User;
 import ru.myRestExample.firstExpirience.domain.Views;
+import ru.myRestExample.firstExpirience.dto.EventType;
+import ru.myRestExample.firstExpirience.dto.ObjectType;
 import ru.myRestExample.firstExpirience.repository.MessageRepository;
+import ru.myRestExample.firstExpirience.util.WsSender;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.function.BiConsumer;
 
 @RestController
 @RequestMapping(value = "message")
 public class MessageController {
     private final MessageRepository messageRepository;
+    private final BiConsumer<EventType, Message> wsSender;
 
     @Autowired
-    public MessageController(MessageRepository messageRepository) {
+    public MessageController(MessageRepository messageRepository, WsSender wsSender) {
         this.messageRepository = messageRepository;
+        this.wsSender = wsSender.getSender(ObjectType.MESSAGE, Views.IdName.class);
     }
 
     @GetMapping
     // для того, чтобы не выводить дату создания сообщения пометим аннотацией JsonView
     @JsonView(Views.IdName.class)
     public List<Message> list() {
-
         return messageRepository.findAll();
     }
 
@@ -38,21 +43,13 @@ public class MessageController {
         return message;
     }
 
-/*
-Закрментировал, потому что этот метод нам больше не нужен, но оставил
-для примера как генерировать ошибки.
-
-private Map<String, String> getMessage(@PathVariable String id) {
-        return messages.stream()
-                .filter(message -> message.get("id").equals(id))
-                .findFirst()
-                .orElseThrow(NotFoundException::new);
-    }*/
-
     @PostMapping
-    public Message create (@RequestBody Message message){
+    public Message create (@RequestBody Message message, @AuthenticationPrincipal User user){
         message.setCreationDate(LocalDateTime.now());
-        return messageRepository.save(message);
+        message.setAuthor(user.getName());
+        Message createdMessage = messageRepository.save(message);
+        wsSender.accept(EventType.CREATE, createdMessage);
+        return createdMessage;
     }
 
     @PutMapping("{id}")
@@ -64,22 +61,15 @@ private Map<String, String> getMessage(@PathVariable String id) {
     ){
         /*Данный метод копирует из message(который мы получаем от пользователя по id в виде json)
         в messageFromDb игнорируя id(из message)*/
-        BeanUtils.copyProperties(message, messageFromDb, "id");
-        return messageRepository.save(messageFromDb);
+        BeanUtils.copyProperties(message, messageFromDb, "id", "author");
+        Message updatedMessage = messageRepository.save(messageFromDb);
+        wsSender.accept(EventType.UPDATE, updatedMessage);
+        return updatedMessage;
     }
 
     @DeleteMapping("{id}")
     public void delete(@PathVariable("id") Message message){
         messageRepository.delete(message);
-    }
-
-    //метод для работы с веб сокетами.Он дублирует поведение контроллера в плане создания и обновления сообзений.
-    @MessageMapping("/changeMessage") //Отечает за получение сообщений через веб сокеты.
-    // Клиентские приложения на этот мапинг(/changeMessage) могут отправлять сообщения, которые будут востанавливаться в обьект Message
-    @SendTo("/topic/activity") //Отвечает за то - в какой топик мы будем складывать ответы
-    //Топик это такой канал, куда подписываются сервевы и клиенты.
-    // Топиков может быть несколько и они отвечают за разные задачи.
-    public Message change(Message message) {
-        return messageRepository.save(message);
+        wsSender.accept(EventType.REMOVE, message);
     }
 }

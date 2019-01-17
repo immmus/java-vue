@@ -22,7 +22,6 @@
 <script>
     import MessagesList from "components/messages/MessagesList.vue"
     import {addHandler} from "util/ws";
-    import {getIndex} from "util/collections";
 
     export default {
         components: {
@@ -35,16 +34,29 @@
             }
         },
         created() {
-            addHandler(message => {
+            addHandler(data => {
+                if (data.objectType === 'MESSAGE') {
                 //получаем индех сообщения в листе
-                let index = getIndex(this.messages, message.id)
-                if (index > -1) {
-                    //заменяем существующее сообщение по индексу, указываем, что елемент будет один
-                    //и передаем наше сообщение
-                    this.messages.splice(index, 1, message)
-                } else {
-                    //если сообщение новое отправляем его на сервер
-                    this.messages.push(message)
+                const index = this.messages.findIndex(item => item.id === data.body.id)
+                switch (data.eventType) {
+                    case 'CREATE':
+                    case 'UPDATE':
+                        if (index > -1) {
+                            this.messages.splice(index, 1, data.body)
+                        } else {
+                            this.messages.push(data.body)
+                        }
+                        break
+                    case 'REMOVE':
+                        if (index > -1) {
+                            this.messages.splice(index, 1)
+                        }
+                        break
+                    default:
+                        console.error('Looks like the event type if unknown "${data.eventType)}" ')
+                }
+            } else {
+                    console.error('looks like object type if unknown "${data.objectType}" ')
                 }
             })
         }
