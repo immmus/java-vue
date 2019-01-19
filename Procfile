@@ -1,1 +1,1 @@
-web: java -Dserver.port=$PORT $JAVA_OPTS -jar backend/target/firstExpirience-1.0-SNAPSHOT.jar && yarn --cwd frontend start
+web: java -Dserver.port=$PORT $JAVA_OPTS -jar backend/target/backend-1.0-SNAPSHOT.jar & yarn --cwd frontend start
