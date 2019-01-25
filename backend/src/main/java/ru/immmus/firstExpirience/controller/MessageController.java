@@ -61,7 +61,7 @@ public class MessageController {
     ){
         /*Данный метод копирует из message(который мы получаем от пользователя по id в виде json)
         в messageFromDb игнорируя id(из message)*/
-        BeanUtils.copyProperties(message, messageFromDb, "id", "author");
+        BeanUtils.copyProperties(message, messageFromDb, "id", "author", "user_id");
         Message updatedMessage = messageRepository.save(messageFromDb);
         wsSender.accept(EventType.UPDATE, updatedMessage);
         return updatedMessage;

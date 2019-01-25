@@ -36,5 +36,4 @@ public class Message {
     // Этими аннотациями, мы буде помечать методы в MessageController
     @JsonView(Views.FullMessage.class)
     private LocalDateTime creationDate;
-
 }
