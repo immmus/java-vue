@@ -8,9 +8,9 @@ import javax.persistence.Table;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+@Data
 @Entity
 @Table(name = "usr")
-@Data
 public class User implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id

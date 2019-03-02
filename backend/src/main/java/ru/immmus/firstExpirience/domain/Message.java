@@ -2,18 +2,14 @@ package ru.immmus.firstExpirience.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonView;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
 @Table
-@Getter
-@Setter
+@Data
 @ToString(of = {"id", "text"})
 @EqualsAndHashCode(of = "id")
 public class Message {
@@ -36,4 +32,14 @@ public class Message {
     // Этими аннотациями, мы буде помечать методы в MessageController
     @JsonView(Views.FullMessage.class)
     private LocalDateTime creationDate;
+    @JsonView(Views.FullMessage.class)
+    private String link;
+
+    //Эти три поля будут заполняться только для ссылок ведущих не на ютуб
+    @JsonView(Views.FullMessage.class)
+    private String linkTitle;
+    @JsonView(Views.FullMessage.class)
+    private String linkDescription;
+    @JsonView(Views.FullMessage.class)
+    private String linkCover;
 }

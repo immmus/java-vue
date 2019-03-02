@@ -9,6 +9,8 @@
             {{ message.text }}
         </v-card-text>
 
+        <media v-if="message.link" :message="message"></media>
+
         <v-layout align-center justify-end>
             <v-card-actions>
                 <v-btn @click="edit" small flat round>Edit</v-btn>
@@ -22,10 +24,11 @@
 
 <script>
     import {mapActions} from 'vuex'
-
+    import Media from '../media/Media.vue'
     export default {
         name: "MessageRow",
         props: ['message', 'editMessage'],
+        components: {Media},
         methods: {
             ...mapActions(['removeMessageActions']),
             showMessageAuthorProfile() {
