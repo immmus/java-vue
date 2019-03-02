@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "usr")
-@Data /*ЭТО ПОД ВОПРОСОМ! Если вдруг мы решим сериализовать этот класс, то такая анотация не подойдет*/
+@Data
 public class User implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
