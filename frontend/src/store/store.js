@@ -42,17 +42,22 @@ export default new Vuex.Store({
             // у  него берем id и вставляем его в state
             const updateIndex = state.messages.findIndex(item => item.id === comment.message.id);
             const message = state.messages[updateIndex];
-            state.messages = [
-                ...state.messages.slice(0, updateIndex),
-                {
-                    ...message, // раскладываем наше сообшение в словаре
-                    comments: [ // и указываем, что список комментов в сообщении изменяется
-                        ...message.comments, // берем все наши комментарии сообщения
-                        comment // и вставляем наш коммпент в конец листа
-                    ]
-                },
-                ...state.messages.slice(updateIndex + 1)
-            ]
+
+            // проверка на то, чтобы случайно не добавить 2 одинаковых комментария
+            // проверяет на то, что в нашей коллекции нет элемента с похожим id
+            if (!message.comments.find(it => it.id === comment.id)) {
+                state.messages = [
+                    ...state.messages.slice(0, updateIndex),
+                    {
+                        ...message, // раскладываем наше сообшение в словаре
+                        comments: [ // и указываем, что список комментов в сообщении изменяется
+                            ...message.comments, // берем все наши комментарии сообщения
+                            comment // и вставляем наш коммпент в конец листа
+                        ]
+                    },
+                    ...state.messages.slice(updateIndex + 1)
+                ]
+            }
         },
     },
     actions: {
@@ -91,9 +96,9 @@ export default new Vuex.Store({
         },
         async addCommentAction ({commit, state}, comment) {
             const result = await commentApi.add(comment);
-            const data = result.json();
+            const data = await result.json();
 
-            commit('addCommentMutation', comment)
+            commit('addCommentMutation', data)
         }
     }
 })

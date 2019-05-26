@@ -9,7 +9,7 @@ import javax.persistence.*;
 @Data
 @Table
 @Entity
-@EqualsAndHashCode(of = "id")
+@EqualsAndHashCode(of = { "id" })
 public class Comment {
 
     @Id
@@ -22,13 +22,14 @@ public class Comment {
 
     @ManyToOne
     @JoinColumn(name = "message_id")
+    @JsonView(Views.FullComment.class)
     private Message message;
 
     @ManyToOne
     // updatable = false - означает, что автора мы устанавливаем один раз и навсегда
     @JoinColumn(name = "user_id", nullable = false, updatable = false)
     // автор будет отображаться в тот момент, когда мы запрашиваем комментарии к сообщению
-    @JsonView(Views.FullMessage.class)
+    @JsonView(Views.IdName.class)
     private User author;
 
 }

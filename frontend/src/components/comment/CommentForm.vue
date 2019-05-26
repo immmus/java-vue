@@ -1,25 +1,28 @@
 <template>
-    <v-layout row>
+    <v-layout row class="px-3">
         <v-text-field
                 label="Add comment"
                 placeholder="Write something"
                 v-model="text"
                 @keyup.enter="save"
         />
-        <v-btn @click="save" normal
-               :disabled="isEmpty">
+        <v-btn
+                @click="save" normal
+                :disabled="isEmpty"
+        >
             Add
         </v-btn>
     </v-layout>
 </template>
 
 <script>
-    import { mapActions } from 'vuex'
+    import {mapActions} from 'vuex'
+
     export default {
         name: "CommentForm",
-        props: [ 'messageId' ],
+        props: ['messageId'],
         computed: {
-            isEmpty(){
+            isEmpty() {
                 const t = this.text
                 return t === "" || t.trim().length === 0
             }
@@ -30,13 +33,13 @@
             }
         },
         methods: {
-            ...mapActions( [ 'addCommentAction' ] ),
+            ...mapActions(['addCommentAction']),
             async save() {
                 await this.addCommentAction({
                     text: this.text,
                     message: {
                         id: this.messageId
-                }
+                    }
                 });
                 this.text = ''
             }

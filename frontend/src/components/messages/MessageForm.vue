@@ -27,7 +27,7 @@
         data: function () {
             return {
                 text: '',
-                id: ''
+                id: null
             }
         },
         watch: {
@@ -51,7 +51,7 @@
                 }
                 //После отправки сообщения нужно отчистить поля
                 this.text = '';
-                this.id = '';
+                this.id = null
             }
         }
     }
