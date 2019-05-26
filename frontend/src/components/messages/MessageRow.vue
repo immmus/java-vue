@@ -2,9 +2,8 @@
     <v-card class="my-2">
         <v-card-text primary-title>
             <a flat
-                   :small="$vuetify.breakpoint.xsOnly"
-                   @click="showMessageAuthorProfile">
-                ({{ message.author }})
+               :small="$vuetify.breakpoint.xsOnly">
+                ({{ message.id }})
             </a>
             {{ message.text }}
         </v-card-text>
@@ -18,6 +17,10 @@
                     <v-icon>delete</v-icon>
                 </v-btn>
             </v-card-actions>
+            <comment-list
+                    :comments="message.comments"
+                    :message-id="message.id"
+            ></comment-list>
         </v-layout>
     </v-card>
 </template>
@@ -25,20 +28,19 @@
 <script>
     import {mapActions} from 'vuex'
     import Media from '../media/Media.vue'
+    import CommentList from "../comment/CommentList.vue";
+
     export default {
         name: "MessageRow",
         props: ['message', 'editMessage'],
-        components: {Media},
+        components: {CommentList, Media},
         methods: {
-            ...mapActions(['removeMessageActions']),
-            showMessageAuthorProfile() {
-                this.$router.push('/user/' + this.author)
-            },
+            ...mapActions(['removeMessageAction']),
             edit() {
                 this.editMessage(this.message)
             },
             del() {
-                this.removeMessageActions(this.message)
+                this.removeMessageAction(this.message)
             }
         }
     }

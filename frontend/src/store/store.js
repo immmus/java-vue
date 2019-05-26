@@ -1,11 +1,12 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import messagesApi from '../api/messages.js';
+import commentApi from '../api/comment.js';
 
 Vue.use(Vuex)
 export default new Vuex.Store({
     state: {
-        messages: frontendData.messages,
+        messages,
         profile: frontendData.profile
     },
     getters: {
@@ -28,7 +29,7 @@ export default new Vuex.Store({
             ]
         },
         removeMessageMutation(state, message) {
-            const removeIndex = state.messages.findIndex(item => item.id === message.id)
+            const removeIndex = state.messages.findIndex(item => item.id === message.id);
             if (removeIndex > -1) {
                 state.messages = [
                     ...state.messages.slice(0, removeIndex),
@@ -36,9 +37,26 @@ export default new Vuex.Store({
                 ]
             }
         },
+        addCommentMutation(state, comment) {
+            // Достаем из нашего комментария message (согласно доменной модели в бекенде),
+            // у  него берем id и вставляем его в state
+            const updateIndex = state.messages.findIndex(item => item.id === comment.message.id);
+            const message = state.messages[updateIndex];
+            state.messages = [
+                ...state.messages.slice(0, updateIndex),
+                {
+                    ...message, // раскладываем наше сообшение в словаре
+                    comments: [ // и указываем, что список комментов в сообщении изменяется
+                        ...message.comments, // берем все наши комментарии сообщения
+                        comment // и вставляем наш коммпент в конец листа
+                    ]
+                },
+                ...state.messages.slice(updateIndex + 1)
+            ]
+        },
     },
     actions: {
-        addMessageActions: async function ({commit, state}, message) {
+        addMessageAction: async function ({commit, state}, message) {
             /* messagesApi.add(message)
                  .then(result =>
                  result.json().then(data => {
@@ -56,20 +74,26 @@ export default new Vuex.Store({
             if (index > -1) {
                 commit('updateMessageMutation', data)
             } else {
-                commit('addMessageActions', data)
+                commit('addMessageAction', data)
             }
         },
-        async updateMessageActions({commit}, message) {
-            const result = await messagesApi.update(message)
-            const data = await result.json()
+        async updateMessageAction({commit}, message) {
+            const result = await messagesApi.update(message);
+            const data = await result.json();
             commit('updateMessageMutation', data)
         },
-        async removeMessageActions({commit}, message) {
+        async removeMessageAction({commit}, message) {
             // {id: message.id} передает не только id, но и объект
-           const  result = await messagesApi.remove(/*{id: message.id}*/ message.id)
-                if (result.ok) {
-                   commit('removeMessageMutation', message)
-                }
+            const result = await messagesApi.remove(/*{id: message.id}*/ message.id);
+            if (result.ok) {
+                commit('removeMessageMutation', message)
+            }
+        },
+        async addCommentAction ({commit, state}, comment) {
+            const result = await commentApi.add(comment);
+            const data = result.json();
+
+            commit('addCommentMutation', comment)
         }
     }
 })
