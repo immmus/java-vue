@@ -40,8 +40,8 @@
             ...mapActions(['updateMessageAction', 'addMessageAction']),
             save() {
                 const message = {
-                    id: this.id,
                     text: this.text,
+                    id: this.id,
                 };
 
                 if (this.id) {

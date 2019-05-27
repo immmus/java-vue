@@ -7,7 +7,7 @@ const handlers = []
 export function connect() {
     const socket = new SockJS('/my-first-websocket')
     stompClient = Stomp.over(socket)
-    stompClient.debug = () => {}  // ОТключаем логирование stomp
+    stompClient.debug = () => {}  // Отключаем логирование stomp
     stompClient.connect({}, frame => {
         stompClient.subscribe('/topic/activity', message => {
             handlers.forEach(handler => handler(JSON.parse(message.body)))

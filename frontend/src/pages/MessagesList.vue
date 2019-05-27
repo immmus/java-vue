@@ -6,6 +6,8 @@
                          :key="message.id"
                          :message="message"
                          :editMessage="editMessage"/>
+            <!--данный тег это vue компонент /components/LazyLoader.vue-->
+            <lazy-loader></lazy-loader>
         </v-layout>
     </v-container>
 </template>
@@ -14,10 +16,12 @@
     import {mapGetters} from 'vuex'
     import MessageRow from '../components/messages/MessageRow.vue'
     import MessageForm from '../components/messages/MessageForm.vue'
+    import LazyLoader from "../components/LazyLoader.vue";
 
     export default {
         computed: mapGetters(['sortedMessages']),
         components: {
+            LazyLoader,
             MessageRow,
             MessageForm
         },

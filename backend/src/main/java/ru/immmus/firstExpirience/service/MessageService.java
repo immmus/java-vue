@@ -4,14 +4,16 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import ru.immmus.firstExpirience.domain.Message;
 import ru.immmus.firstExpirience.domain.User;
 import ru.immmus.firstExpirience.domain.Views;
 import ru.immmus.firstExpirience.dto.EventType;
+import ru.immmus.firstExpirience.dto.MessagePageDto;
 import ru.immmus.firstExpirience.dto.MetaDto;
 import ru.immmus.firstExpirience.dto.ObjectType;
 import ru.immmus.firstExpirience.repository.MessageRepository;
@@ -19,7 +21,6 @@ import ru.immmus.firstExpirience.util.WsSender;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -38,7 +39,7 @@ public class MessageService {
     @Autowired
     public MessageService(MessageRepository messageRepository, WsSender wsSender) {
         this.messageRepository = messageRepository;
-        this.wsSender = wsSender.getSender(ObjectType.MESSAGE, Views.IdName.class);
+        this.wsSender = wsSender.getSender(ObjectType.MESSAGE, Views.FullMessage.class);
     }
 
     public Message create(Message message, User user) throws IOException {
@@ -55,8 +56,13 @@ public class MessageService {
         return createdMessage;
     }
 
-    public List<Message> findAll() {
-        return messageRepository.findAll();
+    public MessagePageDto findAll(Pageable pageable) {
+        Page<Message> page = messageRepository.findAll(pageable);
+        return new MessagePageDto(
+                page.getContent(),
+                pageable.getPageNumber(),
+                page.getTotalPages()
+        );
     }
 
     public Message update(
@@ -66,8 +72,7 @@ public class MessageService {
         /*Данный метод копирует из message(который мы получаем от пользователя по id в виде json)
         в messageFromDb игнорируя id(из message)*/
         fillMeta(messageFromUser);
-        BeanUtils.copyProperties(messageFromUser, messageFromDb, "id", "author", "user_id");
-
+        messageFromDb.setText(messageFromUser.getText());
         Message updatedMessage = messageRepository.save(messageFromDb);
         wsSender.accept(EventType.UPDATE, updatedMessage);
         return updatedMessage;
