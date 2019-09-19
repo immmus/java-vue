@@ -5,6 +5,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -37,7 +38,7 @@ public class Message {
     // orphanRemoval = true - означает, что при удалении message все зависимые комменты должны удалиться
     @OneToMany(mappedBy = "message", orphanRemoval = true)
     @JsonView(Views.FullMessage.class)
-    private List<Comment> comments;
+    private List<Comment> comments = new ArrayList<>();
 
     @Column(updatable = false)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", locale = "English")
