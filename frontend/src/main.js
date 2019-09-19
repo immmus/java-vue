@@ -9,7 +9,7 @@ import {connect} from './util/ws'
 import 'vuetify/dist/vuetify.min.css'
 
 //проверяем что поле profile заполнено и только тогда открываем сокет
-if (frontendData.profile) {
+if (profile) {
     connect()
 }
 

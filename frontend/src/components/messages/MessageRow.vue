@@ -3,42 +3,26 @@
             https://vuetifyjs.com/ru/framework/spacing -->
     <v-card class="my-2">
         <v-card-text primary-title>
-            <!--https://vuetifyjs.com/ru/components/avatars-->
-            <div>
-                <v-avatar
-                        v-if="message.author && message.author.userPicture"
-                        size="48px"
-                >
-                    <img
-                            :src="message.author.userPicture"
-                            :alt="message.author.name"
-                    >
-                </v-avatar>
-
-                <v-avatar
-                        v-else
-                        size="36px"
-                        color="indigo"
-                >
-                    <v-icon dark>account_circle</v-icon>
-                </v-avatar>
-                <span class="pl-3">{{ authorName }}</span>
-
-                <v-layout align-center justify-end>
-                    <v-card-actions>
-                        <v-btn @click="edit" small flat round>Edit</v-btn>
-                        <v-btn icon @click="del" small>
-                            <v-icon>delete</v-icon>
-                        </v-btn>
-                    </v-card-actions>
-                </v-layout>
-            </div>
+            <!--указываем автора и размер аватара для компонента UserLink-->
+            <user-link
+                    :user ="message.author"
+                    size="48px"
+            ></user-link>
             <div class="pl-3">
                 {{ message.text }}
             </div>
         </v-card-text>
 
         <media v-if="message.link" :message="message"></media>
+
+        <v-layout align-center justify-end>
+            <v-card-actions>
+                <v-btn @click="edit" small flat round>Edit</v-btn>
+                <v-btn icon @click="del" small>
+                    <v-icon>delete</v-icon>
+                </v-btn>
+            </v-card-actions>
+        </v-layout>
 
         <comment-list
                 :comments="message.comments"
@@ -51,18 +35,12 @@
     import {mapActions} from 'vuex'
     import Media from '../media/Media.vue'
     import CommentList from "../comment/CommentList.vue";
+    import UserLink from "../UserLink.vue";
 
     export default {
         name: "MessageRow",
         props: ['message', 'editMessage'],
-        components: {CommentList, Media},
-        // https://ru.vuejs.org/v2/guide/computed.html
-        computed: {
-            // данным методом мы обработали ситуацию - если вдруг автор не задан
-            authorName() {
-                return this.message.author ? this.message.author.name : 'unknown'
-            }
-        },
+        components: {UserLink, CommentList, Media},
         methods: {
             ...mapActions(['removeMessageAction']),
             edit() {
