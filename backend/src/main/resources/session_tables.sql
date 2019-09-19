@@ -41,6 +41,9 @@ create table comment
         constraint fkatlrxw2dnvma9h401t2ql2ri8
             references message
 );
+/*
+create index SPRING_SESSION_IX2
+    on spring_session (EXPIRY_TIME);
 
 create table spring_session
 (
@@ -56,9 +59,6 @@ create table spring_session
         unique (SESSION_ID)
 );
 
-create index SPRING_SESSION_IX2
-    on spring_session (EXPIRY_TIME);
-
 create index SPRING_SESSION_IX3
     on spring_session (PRINCIPAL_NAME);
 
@@ -73,3 +73,4 @@ create table spring_session_attributes
             on delete cascade
 );
 
+*/

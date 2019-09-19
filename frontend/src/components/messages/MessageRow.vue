@@ -6,9 +6,9 @@
             <!--указываем автора и размер аватара для компонента UserLink-->
             <user-link
                     :user ="message.author"
-                    size="48px"
+                    size="48"
             ></user-link>
-            <div class="pl-3">
+            <div class="pl-3 pt-3">
                 {{ message.text }}
             </div>
         </v-card-text>

@@ -83,7 +83,7 @@
             async updateProfile() {
                 // если в url нет id, то берем из профиля
                 // получение параметров опысывается в документации https://router.vuejs.org/ru/guide/essentials/dynamic-matching.html
-                const id = this.$route.params.id || this.state.profile.id
+                const id = this.$route.params.id || this.$store.state.profile.id
                 const data = await profileApi.get(id)
                 this.profile = await data.json()
 

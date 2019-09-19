@@ -38,7 +38,7 @@
         computed: {
             // данным методом мы обработали ситуацию - если вдруг автор не задан
             userName() {
-                return this.user ? this.user : 'unknown'
+                return this.user ? this.user.name : 'unknown'
             }
         },
     }
