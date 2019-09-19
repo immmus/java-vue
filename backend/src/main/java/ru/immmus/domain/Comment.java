@@ -11,9 +11,11 @@ import javax.persistence.*;
 @Entity
 @EqualsAndHashCode(of = { "id" })
 public class Comment {
+    public static final int COMMENT_SEQ = 100000;
 
     @Id
-    @GeneratedValue
+    @SequenceGenerator(name = "comment_seq", sequenceName = "comment_seq", allocationSize = 1, initialValue = COMMENT_SEQ)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "comment_seq")
     @JsonView(Views.IdName.class)
     private Long id;
 

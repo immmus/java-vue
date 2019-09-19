@@ -17,8 +17,11 @@ import java.util.List;
         generator = ObjectIdGenerators.PropertyGenerator.class
 )
 public class Message {
+    public static final int MESSAGE_SEQ = 100000;
+
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @SequenceGenerator(name = "message_seq", sequenceName = "message_seq", allocationSize = 1, initialValue = MESSAGE_SEQ)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "message_seq")
     @JsonView(Views.Id.class) // показываем только id
     private Long id;
     // Аннотация JsonView рпедназначена для того, чтобы пометить интерфейсом поля и методы, которые мы будем

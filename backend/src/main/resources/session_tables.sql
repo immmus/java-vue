@@ -1,3 +1,6 @@
+CREATE SEQUENCE message_seq START 100000;
+CREATE SEQUENCE comment_seq START 100000;
+
 create table usr
 (
     id           varchar(255) not null
@@ -14,7 +17,7 @@ create table message
 (
     id               bigint not null
         constraint message_pkey
-            primary key,
+            primary key DEFAULT nextval('message_seq'),
     creation_date    timestamp,
     link             varchar(255),
     link_cover       varchar(400),
@@ -29,7 +32,7 @@ create table comment
 (
     id         bigint       not null
         constraint comment_pkey
-            primary key,
+            primary key DEFAULT nextval('comment_seq'),
     text       varchar(255),
     user_id    varchar(255) not null
         constraint fkgcgdcgly6u49hf4g8y2di3g4p
