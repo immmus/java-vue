@@ -5,7 +5,7 @@
             <v-card-title>
                 <div>
                     <h3>
-                        <a :href="message.link">{{message.linkTitle || message.link}}</a>
+                        <a :href="message.link">{{message.linkTitle || message.link.slice(0, 30)}}...</a>
                     </h3>
                     <div v-if="message.linkDescription">{{message.linkDescription}}</div>
                 </div>
@@ -14,7 +14,6 @@
         <v-flex v-if="type === 'image' " xs12 sm6 offset-sm3>
             <a :href="message.link">
                 <v-img v-if="message.linkCover" :src="message.linkCover" aspect-ratio="2.75"></v-img>
-                {{message.link}}
             </a>
         </v-flex>
         <v-flex v-if="type === 'youtube' " xs12 sm6 offset-sm3>
