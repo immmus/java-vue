@@ -1,11 +1,11 @@
-<template>
+<template xmlns:confirmation-dialog="http://www.w3.org/1999/html">
     <!--Ссылка на документаци по отступам
             https://vuetifyjs.com/ru/framework/spacing -->
     <v-card class="my-2">
         <v-card-text primary-title>
             <!--указываем автора и размер аватара для компонента UserLink-->
             <user-link
-                    :user ="message.author"
+                    :user="message.author"
                     size="48"
             ></user-link>
             <div class="pl-3 pt-3">
@@ -18,9 +18,13 @@
         <v-layout align-center justify-end>
             <v-card-actions>
                 <v-btn @click="edit" small flat round>Edit</v-btn>
-                <v-btn icon @click="del" small>
+                <v-btn icon small @click.stop="dialog = true">
                     <v-icon>delete</v-icon>
                 </v-btn>
+                <confirmation-dialog
+                        :dialog.sync = "dialog"
+                        :del="del"
+                />
             </v-card-actions>
         </v-layout>
 
@@ -36,11 +40,17 @@
     import Media from '../media/Media.vue'
     import CommentList from "../comment/CommentList.vue";
     import UserLink from "../UserLink.vue";
+    import ConfirmationDialog from "./ConfirmationDialog.vue";
 
     export default {
         name: "MessageRow",
         props: ['message', 'editMessage'],
-        components: {UserLink, CommentList, Media},
+        components: {UserLink, CommentList, Media, ConfirmationDialog},
+        data() {
+          return {
+              dialog: false
+          }
+        },
         methods: {
             ...mapActions(['removeMessageAction']),
             edit() {
