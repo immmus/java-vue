@@ -37,6 +37,7 @@ public class User implements Serializable {
     @JsonView(Views.FullProfile.class)
     private String locale;
     @JsonView(Views.FullProfile.class)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", locale = "English")
     private LocalDateTime lastVisit;
 
     @JsonView(Views.FullProfile.class)

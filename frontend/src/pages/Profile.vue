@@ -11,7 +11,7 @@
                         <v-layout column class="px-1">
                             <v-flex>{{profile.name}}</v-flex>
                             <!-- <v-flex>{{profile.email}}</v-flex>-->
-                            <v-flex>{{profile.lastVisit}}</v-flex>
+                            <v-flex>Last visit: {{profile.lastVisit}}</v-flex>
                             <v-flex>{{profile.gender}}</v-flex>
                             <!--В данном случае левая часть проверяет, если у нас есть подписчики или подписки,
                             то показываем то что содержится в правой части, в данном случае из количество-->
