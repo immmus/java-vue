@@ -85,21 +85,36 @@ public class MessageService {
     }
 
     public Message update(
+            User user,
             Message messageFromDb,
             Message messageFromUser
     ) throws IOException {
+        if (isItMessageThisUser(messageFromDb, user)) {
         /*Данный метод копирует из message(который мы получаем от пользователя по id в виде json)
         в messageFromDb игнорируя id(из message)*/
-        fillMeta(messageFromUser);
-        messageFromDb.setText(messageFromUser.getText());
-        Message updatedMessage = messageRepository.save(messageFromDb);
-        wsSender.accept(EventType.UPDATE, updatedMessage);
-        return updatedMessage;
+            fillMeta(messageFromUser);
+            messageFromDb.setText(messageFromUser.getText());
+            Message updatedMessage = messageRepository.save(messageFromDb);
+            wsSender.accept(EventType.UPDATE, updatedMessage);
+            return updatedMessage;
+        } else {
+            return messageFromDb;
+        }
     }
 
-    public void delete(Message message) {
-        messageRepository.delete(message);
-        wsSender.accept(EventType.REMOVE, message);
+    public void delete(User user, Message message) {
+        if (isItMessageThisUser(message, user)) {
+            messageRepository.delete(message);
+            wsSender.accept(EventType.REMOVE, message);
+        }
+    }
+
+    private boolean isItMessageThisUser(Message message, User user) {
+        if (user != null && message != null) {
+            return message.getAuthor().getId().equals(user.getId());
+        } else {
+            return false;
+        }
     }
 
     private void fillMeta(Message message) throws IOException {

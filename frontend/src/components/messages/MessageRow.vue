@@ -16,13 +16,15 @@
         <media v-if="message.link" :message="message"></media>
 
         <v-layout align-center justify-end>
-            <v-card-actions>
+            <v-card-actions
+                    v-if="isItMessageThisUser"
+            >
                 <v-btn @click="edit" small flat round>Edit</v-btn>
                 <v-btn icon small @click.stop="dialog = true">
                     <v-icon>delete</v-icon>
                 </v-btn>
                 <confirmation-dialog
-                        :dialog.sync = "dialog"
+                        :dialog.sync="dialog"
                         :del="del"
                 />
             </v-card-actions>
@@ -47,9 +49,14 @@
         props: ['message', 'editMessage'],
         components: {UserLink, CommentList, Media, ConfirmationDialog},
         data() {
-          return {
-              dialog: false
-          }
+            return {
+                dialog: false
+            }
+        },
+        computed: {
+            isItMessageThisUser() {
+                return this.message.author.id === this.$store.state.profile.id
+            }
         },
         methods: {
             ...mapActions(['removeMessageAction']),

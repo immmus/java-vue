@@ -57,15 +57,20 @@ public class MessageController {
     @PutMapping("{id}")
     @JsonView(Views.FullMessage.class)
     public Message update(
+            @AuthenticationPrincipal User user,
             //Так мы получаем сообщение по id из базы данных
             @PathVariable("id") Message messageFromDb,
             //Так получаем сообщение от пользователя
-            @RequestBody Message message) throws IOException {
-        return messageService.update(messageFromDb, message);
+            @RequestBody Message message
+    ) throws IOException {
+        return messageService.update(user, messageFromDb, message);
     }
 
     @DeleteMapping("{id}")
-    public void delete(@PathVariable("id") Message message) {
-        messageService.delete(message);
+    public void delete(
+            @AuthenticationPrincipal User user,
+            @PathVariable("id") Message message
+    ) {
+        messageService.delete(user, message);
     }
 }
