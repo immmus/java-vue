@@ -27,7 +27,7 @@
                         >
                             <!--Тут мы проверяем подписан ли я на данного пользователя или нет,
                              если да то выводим Unsubscribe, если нет, то Subscribe-->
-                            {{ isISubscribe ? 'Unsubscribe' : 'Subscribe'}}
+                            {{ isISubscribed ? 'Unsubscribe' : 'Subscribe'}}
                         </v-btn>
                     </v-flex>
                 </v-layout>
@@ -55,13 +55,13 @@
                 return !this.$route.params.id ||
                     this.$route.params.id === this.$store.state.profile.id
             },
-            isISubscribe() {
+            isISubscribed() {
                 //Для проверки подписан ли пользователь  на текущего пользователя проверяем что:
                 // у данного пользователя воо имеются подпизки или нет
                 // если да, то смотрим есть ли текущий пользователь в его подписчиках
                 return this.profile.subscribers &&
                     this.profile.subscribers.find(subscription => {
-                        return subscription.id === this.$store.state.profile.id
+                        return subscription.subscriber === this.$store.state.profile.id
                     })
             }
         },

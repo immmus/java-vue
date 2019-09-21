@@ -8,23 +8,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import ru.immmus.domain.Message;
 import ru.immmus.domain.User;
+import ru.immmus.domain.UserSubscription;
 import ru.immmus.domain.Views;
 import ru.immmus.dto.EventType;
 import ru.immmus.dto.MessagePageDto;
 import ru.immmus.dto.MetaDto;
 import ru.immmus.dto.ObjectType;
 import ru.immmus.repository.MessageRepository;
+import ru.immmus.repository.UserSubscriptionRepo;
 import ru.immmus.util.WsSender;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 public class MessageService {
@@ -35,12 +38,18 @@ public class MessageService {
     private static Pattern IMG_REGEX = Pattern.compile(IMAGE_PATTERN, Pattern.CASE_INSENSITIVE);
 
     private final BiConsumer<EventType, Message> wsSender;
+    private final UserSubscriptionRepo userSubscriptionRepo;
     private final MessageRepository messageRepository;
 
     @Autowired
-    public MessageService(MessageRepository messageRepository, WsSender wsSender) {
+    public MessageService(
+            WsSender wsSender,
+            MessageRepository messageRepository,
+            UserSubscriptionRepo userSubscriptionRepo
+    ) {
         this.messageRepository = messageRepository;
         this.wsSender = wsSender.getSender(ObjectType.MESSAGE, Views.FullMessage.class);
+        this.userSubscriptionRepo = userSubscriptionRepo;
     }
 
     public Message create(Message message, User user) throws IOException {
@@ -57,8 +66,17 @@ public class MessageService {
         return createdMessage;
     }
 
-    public MessagePageDto findAll(Pageable pageable) {
-        Page<Message> page = messageRepository.findAll(pageable);
+    public MessagePageDto findForUser(Pageable pageable, User user) {
+        // Т.к. нашего текущего юзера мы получаем через AuthenticationPrincipal, то получаем его из сессии
+        // и там могут быть проблемы с актуальностью данных, поэтому вместо того чтобы получаеть список каналов
+        // через - user.getSubscribers(), мы снова перестрахуемся и получим из из базы
+        Set<User> channels = userSubscriptionRepo.findBySubscriber(user)
+                .stream()
+                .map(UserSubscription::getChannel)
+                .collect(Collectors.toSet());
+        // добавляем текущего пользователя, чтобы он свои сообщения тоже видел
+        channels.add(user);
+        Page<Message> page = messageRepository.findByAuthorIn(channels, pageable);
         return new MessagePageDto(
                 page.getContent(),
                 pageable.getPageNumber(),

@@ -3,6 +3,7 @@ package ru.immmus.domain;
 import com.fasterxml.jackson.annotation.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -14,6 +15,11 @@ import java.util.Set;
 @Entity
 @Table(name = "usr")
 @EqualsAndHashCode(of = "id")
+// Без конкретного определения toString, он пытается подтянуть все поля
+// А именно те которые должны подтягиваться гибернейтом лениво
+// И когда сущность попадает в логи, случается бесконечная рекурсия
+// и тогда гибернейт палает с LazyInitializationException
+@ToString(of = { "id", "name" })
 public class User implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -33,34 +39,17 @@ public class User implements Serializable {
     @JsonView(Views.FullProfile.class)
     private LocalDateTime lastVisit;
 
-    @ManyToMany
     @JsonView(Views.FullProfile.class)
-    @JoinTable(
-            name = "user_subscriptions",
-            joinColumns = @JoinColumn(name = "subscriber_id"),
-            inverseJoinColumns = @JoinColumn(name = "channel_id")
-    )
-    /* Если в потоке сериализуемый класс встречается более 2х раз, то все последующие обьекты заменяются
-    *  и передаются в виде назначеного свойства(property - в данном случае это поле "id" от этого обьекта) */
-    @JsonIdentityReference
-    @JsonIdentityInfo(
-            property = "id",
-            generator = ObjectIdGenerators.PropertyGenerator.class
-    )
-    private Set<User> subscriptions = new HashSet<>();
-    @ManyToMany
-    @JoinTable(
-            name = "user_subscriptions",
-            joinColumns = @JoinColumn(name = "channel_id"),
-            inverseJoinColumns = @JoinColumn(name = "subscriber_id")
-    )
+    @OneToMany(mappedBy = "subscriber", orphanRemoval = true)
+    // Подписки текущего пользователя.
+    // Поэтому в mappedBy связи мы выступаем как подписчик и пристыковываемся к полю subscriber
+    private Set<UserSubscription> subscriptions = new HashSet<>();
+
     @JsonView(Views.FullProfile.class)
-    /* Если в потоке сериализуемый класс встречается более 2х раз, то все последующие обьекты заменяются
-     *  и передаются в виде назначеного свойства(property - в данном случае это поле "id" от этого обьекта) */
-    @JsonIdentityReference
-    @JsonIdentityInfo(
-            property = "id",
-            generator = ObjectIdGenerators.PropertyGenerator.class
-    )
-    private Set<User> subscribers = new HashSet<>();
+    @OneToMany(mappedBy = "channel", orphanRemoval = true, cascade = CascadeType.ALL)
+    // Подписчики текущего пользователя
+    // CascadeType.ALL - здесь нужен, чтобы все действия которые происходят с данным пользователем
+    // распростронялись дальше на всех его подписчиков, потому что мы модифицируем это поле,
+    // а поле подписок нет и поэтому там каскад указывать не нужно
+    private Set<UserSubscription> subscribers = new HashSet<>();
 }

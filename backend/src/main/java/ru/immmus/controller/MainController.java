@@ -47,7 +47,7 @@ public class MainController {
     ) throws JsonProcessingException {
         HashMap<Object, Object> data = new HashMap<>();
         if (user != null) {
-            // Т.к. AuthenticationPrincipal - берет пользователя из кэша, то могут быть какие-нибудь отклонения
+            // Т.к. AuthenticationPrincipal - берет пользователя из кэша(сессии), то могут быть какие-нибудь отклонения
             // И поэтому для страховки, возьму его по id из базы.
             final User userFromDb = userDetailsRepo.findById(user.getId()).get();
             // Записываем пользователя как json для получения его на frontend'e
@@ -56,7 +56,7 @@ public class MainController {
 
             Sort sort = Sort.by(Sort.Direction.DESC, "id");
             PageRequest pageRequest = PageRequest.of(0, MessageController.MESSAGES_PER_PAGE, sort);
-            MessagePageDto messagePageDto = messageService.findAll(pageRequest);
+            MessagePageDto messagePageDto = messageService.findForUser(pageRequest, userFromDb);
 
             final String messages = messageWriter.writeValueAsString(messagePageDto.getMessages());
             model.addAttribute("messages", messages);

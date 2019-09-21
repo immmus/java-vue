@@ -3,12 +3,14 @@ package ru.immmus.domain;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import javax.persistence.*;
 
 @Data
 @Table
 @Entity
+@ToString(of = { "id", "text" })
 @EqualsAndHashCode(of = { "id" })
 public class Comment {
     public static final int COMMENT_SEQ = 100000;

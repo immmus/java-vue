@@ -3,9 +3,10 @@ package ru.immmus.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.immmus.domain.User;
+import ru.immmus.domain.UserSubscription;
 import ru.immmus.repository.UserDetailsRepo;
 
-import java.util.Set;
+import java.util.Optional;
 
 @Service
 public class ProfileService {
@@ -17,12 +18,16 @@ public class ProfileService {
     }
 
     public User changeSubscription(User channel, User subscriber) {
-        final Set<User> subscribers = channel.getSubscribers();
+        Optional<UserSubscription>  subscriptions = channel.getSubscribers()
+                .stream()
+                .filter(subscription -> subscription.getSubscriber().equals(subscriber))
+                .findAny();
 
-        if (subscribers.contains(subscriber)) {
-            subscribers.remove(subscriber);
+        if (subscriptions.isEmpty()) {
+            UserSubscription subscription = new UserSubscription(channel, subscriber);
+            channel.getSubscribers().add(subscription);
         } else {
-            subscribers.add(subscriber);
+            channel.getSubscribers().remove(subscriptions.get());
         }
         return userDetailsRepo.save(channel);
     }
