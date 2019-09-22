@@ -3,12 +3,14 @@ import MessagesList from "../pages/MessagesList.vue"
 import VueRouter from 'vue-router'
 import Auth from '../pages/Auth.vue'
 import Profile from '../pages/Profile.vue'
+import Subscriptions from "../pages/Subscriptions.vue";
 
 Vue.use(VueRouter)
 
 const routes = [
     {path: '/', component: MessagesList},
     {path: '/auth', component: Auth},
+    {path: '/subscriptions/:id', component: Subscriptions},
     /*
     Теперь все URL вида "/user/foo" и "/user/bar" будут соответствовать одному маршруту.
      Для конктретного юзера его профиль будет отображаться по "/user", но для остальных пользователей, чтобы перейти в его профиль

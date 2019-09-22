@@ -5,8 +5,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import ru.immmus.domain.User;
+import ru.immmus.domain.UserSubscription;
 import ru.immmus.domain.Views;
 import ru.immmus.service.ProfileService;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("profile")
@@ -35,5 +38,24 @@ public class ProfileController {
         } else {
             return profileService.changeSubscription(channel, subscriber);
         }
+    }
+
+    @GetMapping({ "get-subscribers/{channelId}" })
+    // сделал @JsonView(Views.IdName.class) т.к. все данные о пользователе нам не нужны
+    // в данном случае достаточно id и name. тоже самое относится к методу changeSubscriptionStatus.
+    @JsonView(Views.IdName.class)
+    //метод возвращает все подписки текущего пользователя
+    public List<UserSubscription> subscribers(@PathVariable("channelId") User channel) {
+        return profileService.getSubscribers(channel);
+    }
+
+    @PostMapping({ "change-status-subscriber/{subscriberId}" })
+    @JsonView(Views.IdName.class)
+    //метод возвращает все подписки текущего пользователя
+    public UserSubscription changeSubscriptionStatus(
+            @AuthenticationPrincipal User channel,
+            @PathVariable("subscriberId") User subscriber
+    ) {
+        return profileService.changeSubscriptionStatus(channel, subscriber);
     }
 }

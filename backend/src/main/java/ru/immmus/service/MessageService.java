@@ -72,6 +72,8 @@ public class MessageService {
         // через - user.getSubscribers(), мы снова перестрахуемся и получим из из базы
         Set<User> channels = userSubscriptionRepo.findBySubscriber(user)
                 .stream()
+                // Отфильтровываем всех у кого не подтверждена подписка, чтобы не выводить его сообщения
+                .filter(UserSubscription::isActive)
                 .map(UserSubscription::getChannel)
                 .collect(Collectors.toSet());
         // добавляем текущего пользователя, чтобы он свои сообщения тоже видел

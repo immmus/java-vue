@@ -15,8 +15,20 @@
                             <v-flex>{{profile.gender}}</v-flex>
                             <!--В данном случае левая часть проверяет, если у нас есть подписчики или подписки,
                             то показываем то что содержится в правой части, в данном случае из количество-->
-                            <v-flex>{{profile.subscriptions && profile.subscriptions.length}} subscriptions</v-flex>
-                            <v-flex>{{profile.subscribers && profile.subscribers.length}} subscribers</v-flex>
+                            <v-flex>
+                                {{profile.subscriptions && profile.subscriptions.length}} subscriptions
+                            </v-flex>
+                            <router-link
+                                    v-if="isMyProfile"
+                                    :to="`/subscriptions/${profile.id}`"
+                            >
+                                {{profile.subscribers && profile.subscribers.length}} subscribers
+                            </router-link>
+                            <v-flex
+                                    v-else
+                            >
+                                {{profile.subscribers && profile.subscribers.length}} subscribers
+                            </v-flex>
                             <!-- <v-flex>{{profile.locale}}</v-flex>-->
                         </v-layout>
                         <!--Показываем кнопку только если это не мой профиль (isMyProfile = false)
