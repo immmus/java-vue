@@ -3,11 +3,12 @@
             https://vuetifyjs.com/ru/framework/spacing -->
     <v-card class="my-2">
         <v-card-text primary-title>
-            <!--указываем автора и размер аватара для компонента UserLink-->
-            <user-link
-                    :user="message.author"
-                    size="48"
-            ></user-link>
+            <!--указываем размер аватара для компонента UserLink-->
+                <user-link
+                        :user="message.author"
+                        :creation-date="message.creationDate"
+                        size="48"
+                ></user-link>
             <div class="pl-3 pt-3">
                 {{ message.text }}
             </div>
@@ -53,6 +54,7 @@
                 dialog: false
             }
         },
+        // https://ru.vuejs.org/v2/guide/computed.html
         computed: {
             isItMessageThisUser() {
                 return this.message.author.id === this.$store.state.profile.id

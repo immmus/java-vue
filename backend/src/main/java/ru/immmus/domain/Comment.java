@@ -1,17 +1,19 @@
 package ru.immmus.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Data
 @Table
 @Entity
-@ToString(of = { "id", "text" })
-@EqualsAndHashCode(of = { "id" })
+@ToString(of = {"id", "text"})
+@EqualsAndHashCode(of = {"id"})
 public class Comment {
     public static final int COMMENT_SEQ = 100000;
 
@@ -23,6 +25,10 @@ public class Comment {
 
     @JsonView(Views.IdName.class)
     private String text;
+
+    @JsonView(Views.IdName.class)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", locale = "English")
+    private LocalDateTime creationDate;
 
     @ManyToOne
     @JoinColumn(name = "message_id")

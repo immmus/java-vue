@@ -11,6 +11,7 @@ import ru.immmus.dto.ObjectType;
 import ru.immmus.repository.CommentRepo;
 import ru.immmus.util.WsSender;
 
+import java.time.LocalDateTime;
 import java.util.function.BiConsumer;
 
 @Service
@@ -28,6 +29,7 @@ public class CommentService {
     public Comment create(Comment comment, User user) {
         Assert.notNull(comment, "Comment can't be null.");
 
+        comment.setCreationDate(LocalDateTime.now());
         comment.setAuthor(user);
         Comment createdComment = commentRepo.save(comment);
 

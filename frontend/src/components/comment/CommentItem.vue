@@ -1,18 +1,26 @@
 <template>
     <!--https://vuetifyjs.com/ru/components/lists-->
-    <v-list-tile>
-        <!--указываем автора и размер аватара для компонента UserLink-->
-        <user-link
-                :user ="comment.author"
-        ></user-link>
-        <v-list-tile-action>
-            <v-list-tile-title>{{comment.text}}</v-list-tile-title>
-        </v-list-tile-action>
-    </v-list-tile>
+    <v-card>
+        <v-card-text primary-title>
+            <!--указываем автора и размер аватара для компонента UserLink-->
+            <user-link
+                    :user="comment.author"
+                    :creation-date="comment.creationDate"
+            ></user-link>
+
+
+            <div
+                    class="pl-3 pt-3"
+            >
+                {{comment.text}}
+            </div>
+        </v-card-text>
+    </v-card>
 </template>
 
 <script>
     import UserLink from "../UserLink.vue";
+
     export default {
         name: 'CommentItem',
         components: {UserLink},

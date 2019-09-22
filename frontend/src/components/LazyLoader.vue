@@ -28,7 +28,7 @@
             window.onscroll = () => {
                 const el = document.documentElement
                 // проверяем что прокрутили страничку до конца экрана
-                // Т.е. текущая позиция + высота окна больше общей высоты документа деленой на 1.05
+                // Т.е. текущая позиция + высота окна больше общей высоты документа деленной на 1.05
                 const isBottomOfScreen = ( el.scrollTop + window.innerHeight ) >= el.offsetHeight / 1.05
                 if (isBottomOfScreen) {
                     this.loadPageAction()
