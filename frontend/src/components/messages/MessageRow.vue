@@ -73,5 +73,6 @@
 <style scoped>
     a {
         color: #000 !important;
+        text-decoration: none;
     }
 </style>

@@ -5,7 +5,6 @@
     -->
     <router-link
             :to="`/user/${user.id}`"
-            class="px-3"
     >
         <!--36 это значение по дефолту-->
         <v-avatar
@@ -21,11 +20,11 @@
         <v-avatar
                 v-else
                 :size="`${size || 36}px`"
-                color="indigo"
+                color="black"
         >
             <v-icon dark>account_circle</v-icon>
         </v-avatar>
-        <span>{{ userName }}</span>
+        <span class="px-2">{{ userName }}</span>
     </router-link>
 </template>
 

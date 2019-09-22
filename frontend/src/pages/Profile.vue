@@ -18,16 +18,19 @@
                             <v-flex>
                                 {{profile.subscriptions && profile.subscriptions.length}} subscriptions
                             </v-flex>
-                            <router-link
+                            <subscriptions
+                                    :dialog.sync="dialog"
+                            ></subscriptions>
+                            <a
                                     v-if="isMyProfile"
-                                    :to="`/subscriptions/${profile.id}`"
+                                    @click.stop="dialog = true"
                             >
                                 {{profile.subscribers && profile.subscribers.length}} subscribers
-                            </router-link>
+                            </a>
                             <v-flex
                                     v-else
                             >
-                                {{profile.subscribers && profile.subscribers.length}} subscribers
+                                {{profile.subscribers && profile.subscribers.length}} subscriber`s
                             </v-flex>
                             <!-- <v-flex>{{profile.locale}}</v-flex>-->
                         </v-layout>
@@ -50,13 +53,16 @@
 
 <script>
     import profileApi from 'api/profile'
+    import Subscriptions from "./Subscriptions.vue";
 
     export default {
         name: "Profile",
+        components: {Subscriptions},
         data() {
             // возвращаем объект с профилем
             return {
-                profile: {}
+                profile: {},
+                dialog: false
             }
         },
         computed: {
@@ -94,7 +100,8 @@
             },
             async updateProfile() {
                 // если в url нет id, то берем из профиля
-                // получение параметров опысывается в документации https://router.vuejs.org/ru/guide/essentials/dynamic-matching.html
+                // получение параметров опысывается в документации
+                // https://router.vuejs.org/ru/guide/essentials/dynamic-matching.html
                 const id = this.$route.params.id || this.$store.state.profile.id
                 const data = await profileApi.get(id)
                 this.profile = await data.json()

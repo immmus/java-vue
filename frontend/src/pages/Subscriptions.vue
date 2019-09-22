@@ -1,38 +1,62 @@
 <template>
-    <v-container>
-        <v-layout justify-space-around>
-            <v-list>
+    <v-dialog v-model="dialog" scrollable persistent max-width="320px">
+        <v-card>
+            <v-card-title>Subscriptions</v-card-title>
+            <v-divider></v-divider>
+            <v-card-text style="height: 340px;">
                 <!--https://vuetifyjs.com/ru/components/lists-->
-                <v-list-tile
-                        v-for="(item, index) in subscriptions"
-                        :key="index"
-                >
-                    <user-link
-                            :key="'user' + index"
-                            :user ="item.subscriber"
-                            size="24"
-                    ></user-link>
-                    <v-btn
-                            :key="'btn' + index"
-                            @click="changeSubscriptionStatus(item.subscriber.id)"
+                <v-list>
+                    <v-item-group column
+                            v-for="item in subscriptions"
+                            :key="item.id"
                     >
-                        {{item.active ? 'Dismiss' : 'Approve'}}
-                    </v-btn>
-                </v-list-tile>
-            </v-list>
-        </v-layout>
-    </v-container>
+                            <v-flex
+                                    grow
+                                    pa-1
+                            >
+                                <v-card>
+                                    <v-card-text>
+                                        <user-link
+                                                @click.native="close"
+                                                :user="item.subscriber"
+                                                size="24"
+                                        ></user-link>
+                                    </v-card-text>
+                                    <v-card-actions>
+                                        <v-btn
+                                                text small flat
+                                                color="indigo"
+                                                @click="changeSubscriptionStatus(item.subscriber.id)"
+                                        >
+                                            <v-icon v-if="item.active" dark>remove</v-icon>
+                                            <v-icon v-else dark>add</v-icon>
+                                            {{item.active ? 'dismiss sub' : 'approve sub'}}
+                                        </v-btn>
+                                    </v-card-actions>
+                                </v-card>
+                            </v-flex>
+                    </v-item-group>
+                </v-list>
+            </v-card-text>
+            <v-divider></v-divider>
+            <v-card-actions>
+                <v-btn block text flat @click.native="close">Close</v-btn>
+            </v-card-actions>
+        </v-card>
+    </v-dialog>
 </template>
 
 <script>
     import profileApi from "../api/profile.js";
     import UserLink from "../components/UserLink.vue";
+
     export default {
         name: "Subscriptions",
+        props: ['dialog'],
         components: {UserLink},
         data() {
             return {
-                subscriptions: []
+                subscriptions: [],
             }
         },
         methods: {
@@ -43,13 +67,17 @@
                 )
                 const subscription = this.subscriptions[subscriptionIndex]
                 this.subscriptions = [
-                    ...this.subscriptions.splice(0, subscriptionIndex),
+                    ...this.subscriptions.slice(0, subscriptionIndex),
                     {
                         ...subscription,
                         active: !subscription.active
                     },
                     ...this.subscriptions.slice(subscriptionIndex + 1)
                 ]
+            },
+            close() {
+                // обновляем диалоговое окно
+                this.$emit('update:dialog', false)
             }
         },
         // async потому что дергаем api
@@ -61,5 +89,8 @@
 </script>
 
 <style scoped>
-
+    a {
+        color: #000 !important;
+        text-decoration: none;
+    }
 </style>
