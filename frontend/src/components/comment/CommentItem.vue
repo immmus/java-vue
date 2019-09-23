@@ -1,21 +1,23 @@
 <template>
     <!--https://vuetifyjs.com/ru/components/lists-->
-    <v-card>
-        <v-card-text primary-title>
-            <!--указываем автора и размер аватара для компонента UserLink-->
-            <user-link
-                    :user="comment.author"
-                    :creation-date="comment.creationDate"
-            ></user-link>
+    <div>
+        <v-card elevation="0">
+            <v-card-text primary-title>
+                <!--указываем автора и размер аватара для компонента UserLink-->
+                <user-link
+                        :user="comment.author"
+                        :creation-date="comment.creationDate"
+                ></user-link>
 
 
-            <div
-                    class="pl-3 pt-3"
-            >
-                {{comment.text}}
-            </div>
-        </v-card-text>
-    </v-card>
+                <div
+                        class="pl-3 pt-3"
+                >
+                    {{comment.text}}
+                </div>
+            </v-card-text>
+        </v-card>
+    </div>
 </template>
 
 <script>

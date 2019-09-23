@@ -4,10 +4,10 @@
             <v-img v-if="message.linkCover" :src="message.linkCover" aspect-ratio="2.75"></v-img>
             <v-card-title>
                 <div>
-                    <h3>
+                    <h5>
                         <a :href="message.link">{{message.linkTitle || message.link.slice(0, 30)}}...</a>
-                    </h3>
-                    <div v-if="message.linkDescription">{{message.linkDescription}}</div>
+                    </h5>
+                    <span v-if="message.linkDescription">{{message.linkDescription}}</span>
                 </div>
             </v-card-title>
         </v-flex>
@@ -24,6 +24,7 @@
 
 <script>
     import Youtube from './Youtube.vue'
+
     export default {
         name: "Media",
         components: {Youtube},

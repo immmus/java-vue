@@ -1,28 +1,37 @@
 <template>
     <v-app>
-        <v-toolbar app>
-            <v-toolbar-title>TestVue</v-toolbar-title>
-            <v-btn flat v-if="profile"
-                   :disabled="$route.path === '/' "
-                   @click="showMessages"> <!--двоеточие означает, что мы будем использовать его динамически.
-                            А $route.path показывает текущее положение, значит disabled отключает кнопку,
-                             когда мы находимся на странице по пути '/' -->
-                Messages
-            </v-btn>
-            <v-spacer></v-spacer>
-            <v-btn flat
-                   v-if="profile"
-                   :disabled="$route.path === '/user'"
-                   @click="showProfile">
-                {{profile.name}}
-            </v-btn>
-            <v-btn v-if="profile" icon href="/logout">
-                <v-icon>exit_to_app</v-icon>
-            </v-btn>
-        </v-toolbar>
-        <v-content>
-            <router-view></router-view>
-        </v-content>
+        <div>
+            <v-toolbar :extended="extended"
+                       :prominent="prominent"
+                       :dense="dense"
+                       :collapse="collapse"
+                       :flat="flat"
+                       :extension-height="extensionHeight">
+                <v-toolbar-title>TestVue</v-toolbar-title>
+                <!--двоеточие означает, что мы будем использовать его динамически.
+                А $route.path показывает текущее положение, значит disabled отключает кнопку,
+                когда мы находимся на странице по пути '/' -->
+                <v-btn text
+                       v-if="profile"
+                       :disabled="$route.path === '/' "
+                       @click="showMessages">
+                    Messages
+                </v-btn>
+                <v-spacer></v-spacer>
+                <v-btn text
+                       v-if="profile"
+                       :disabled="$route.path === '/user'"
+                       @click="showProfile">
+                    {{profile.name}}
+                </v-btn>
+                <v-btn v-if="profile" icon href="/logout">
+                    <v-icon>exit_to_app</v-icon>
+                </v-btn>
+            </v-toolbar>
+        </div>
+            <v-content>
+                <router-view></router-view>
+            </v-content>
     </v-app>
 </template>
 
@@ -31,6 +40,16 @@
     import {addHandler} from "../util/ws"
 
     export default {
+        data: () => ({
+            extended: false,
+            extendedSlot: false,
+            prominent: false,
+            dense: false,
+            collapse: false,
+            flat: false,
+            bg: false,
+            extensionHeight: 48,
+        }),
         computed: mapState(['profile']),
         methods: {
             ...mapMutations([

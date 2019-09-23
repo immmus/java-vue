@@ -1,25 +1,32 @@
 <template>
-    <v-layout row>
-        <v-text-field
-                label="New message"
-                placeholder="Write something"
-                v-model="text"
-                @keyup.enter="save"
-        />
-        <v-btn @click="save" normal
-                    :disabled="isEmpty">
-            Save
-        </v-btn>
-    </v-layout>
+    <v-container>
+        <v-row>
+
+            <v-text-field
+                    label="New message"
+                    placeholder="Write something"
+                    v-model="text"
+                    @keyup.enter="save"
+            >
+            </v-text-field>
+            <v-btn
+                    text
+                    @click="save"
+                   normal
+                   :disabled="isEmpty"
+            >Send
+            </v-btn>
+        </v-row>
+    </v-container>
 </template>
 
 <script>
-    import { mapActions } from 'vuex'
+    import {mapActions} from 'vuex'
 
     export default {
         props: ['messageAttr'],
         computed: {
-            isEmpty(){
+            isEmpty() {
                 const t = this.text
                 return t === "" || t.trim().length === 0
             }

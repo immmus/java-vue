@@ -14,9 +14,11 @@ if (profile) {
 }
 
 Vue.use(Vuetify);
+export default new Vuetify({})
 
 new Vue({
     el: '#app',
+    vuetify: new Vuetify(),
     store,
     router,
     render: a => a(App)

@@ -1,14 +1,14 @@
 <template xmlns:confirmation-dialog="http://www.w3.org/1999/html">
     <!--Ссылка на документаци по отступам
             https://vuetifyjs.com/ru/framework/spacing -->
-    <v-card class="my-2">
+    <v-card>
         <v-card-text primary-title>
             <!--указываем размер аватара для компонента UserLink-->
-                <user-link
-                        :user="message.author"
-                        :creation-date="message.creationDate"
-                        size="48"
-                ></user-link>
+            <user-link
+                    :user="message.author"
+                    :creation-date="message.creationDate"
+                    size="48"
+            ></user-link>
             <div class="pl-3 pt-3">
                 {{ message.text }}
             </div>
@@ -16,18 +16,24 @@
 
         <media v-if="message.link" :message="message"></media>
 
-        <v-layout align-center justify-end>
+        <v-layout align-baseline
+                  justify-end>
+            <confirmation-dialog
+                    :dialog.sync="dialog"
+                    :del="del"
+            />
             <v-card-actions
                     v-if="isItMessageThisUser"
             >
-                <v-btn @click="edit" small flat round>Edit</v-btn>
-                <v-btn icon small @click.stop="dialog = true">
+                <v-btn @click="edit"
+                       :small="$vuetify.breakpoint.xsOnly"
+                       text>Edit
+                </v-btn>
+                <v-btn icon
+                       :small="$vuetify.breakpoint.xsOnly"
+                       @click.stop="dialog = true">
                     <v-icon>delete</v-icon>
                 </v-btn>
-                <confirmation-dialog
-                        :dialog.sync="dialog"
-                        :del="del"
-                />
             </v-card-actions>
         </v-layout>
 

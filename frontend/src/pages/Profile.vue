@@ -4,9 +4,13 @@
             <v-flex :xs6="!$vuetify.breakpoint.xsOnly">
                 <div class="title mb-3">User profile</div>
                 <v-layout row justify-space-between>
-                    <v-flex class="px-1">
+                    <v-avatar class="profile"
+                              color="grey"
+                              size="164"
+                              tile
+                    >
                         <v-img :src="profile.userPicture"></v-img>
-                    </v-flex>
+                    </v-avatar>
                     <v-flex>
                         <v-layout column class="px-1">
                             <v-flex>{{profile.name}}</v-flex>

@@ -1,30 +1,37 @@
 import SockJS from 'sockjs-client'
-import { Stomp } from '@stomp/stompjs'
+import {Client} from '@stomp/stompjs'
 
-let stompClient = null
+let client = null
 const handlers = []
 
 export function connect() {
     const socket = new SockJS('/my-first-websocket')
-    stompClient = Stomp.over(socket)
-    stompClient.debug = () => {}  // Отключаем логирование stomp
-    stompClient.connect({}, frame => {
-        stompClient.subscribe('/topic/activity', message => {
-            handlers.forEach(handler => handler(JSON.parse(message.body)))
-        })
-    })
+    client = new Client()
+    client.webSocketFactory = () => { return socket }
+    client.onConnect = (frame) => frameHandler(frame)
+    client.onWebsocketClose = () => onSocketClose()
+    client.debug = () => {}  // Отключаем логирование stomp
+    client.activate()
 }
 
 export function addHandler(handler) {
     handlers.push(handler)
 }
 
-export function disconnect() {
-    if (stompClient !== null) {
-        stompClient.disconnect()
+export function frameHandler(frame) {
+    console.log('Connected: ' + frame);
+    client.subscribe('/topic/activity', message => {
+        handlers.forEach(handler => handler(JSON.parse(message.body)));
+    });
+}
+
+export function onSocketClose() {
+    if (client !== null) {
+        client.deactivate()
     }
     console.log('Disconnected')
 }
+
 export function sendMessage(message) {
-    stompClient.send('/app/changeMessage', {}, JSON.stringify(message))
+    client.publish({destination: '/app/changeMessage', body: JSON.stringify(message)})
 }

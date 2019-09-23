@@ -6,39 +6,38 @@
     <router-link
             :to="`/user/${user.id}`"
     >
-        <v-list-tile>
+        <v-list-item>
             <!--28 это значение по дефолту-->
-            <v-list-tile-avatar
+            <v-list-item-avatar
                     v-if="user && user.userPicture"
                     :size="`${size || 36}px`"
             >
-                <img
+                <v-img
                         :src="user.userPicture"
-                        :alt="user.id"
 
-                >
-            </v-list-tile-avatar>
+                ></v-img>
+            </v-list-item-avatar>
 
-            <v-list-tile-avatar
+            <v-list-item-avatar
                     v-else
                     :size="`${size || 36}px`"
                     color="black"
             >
                 <v-icon dark>account_circle</v-icon>
-            </v-list-tile-avatar>
+            </v-list-item-avatar>
 
-            <v-list-tile-content>
-                <v-list-tile-title>
+            <v-list-item-content>
+                <v-list-item-title>
                     {{userName}}
-                </v-list-tile-title>
+                </v-list-item-title>
 
-                <v-list-tile-sub-title
+                <v-list-item-subtitle
                         v-if="creationDate"
                 >
                     {{creationDate}}
-                </v-list-tile-sub-title>
-            </v-list-tile-content>
-        </v-list-tile>
+                </v-list-item-subtitle>
+            </v-list-item-content>
+        </v-list-item>
         <!--<span class="px-2">{{ userName }}</span>-->
     </router-link>
 </template>

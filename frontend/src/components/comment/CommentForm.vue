@@ -1,18 +1,26 @@
 <template>
-    <v-layout row class="px-3">
-        <v-text-field
-                label="Add comment"
-                placeholder="Write something"
-                v-model="text"
-                @keyup.enter="save"
-        />
-        <v-btn
-                @click="save" normal
-                :disabled="isEmpty"
-        >
-            Add
-        </v-btn>
-    </v-layout>
+        <v-row no-gutters>
+                <v-layout
+                        class="pa-2"
+                        outlined
+                        tile
+                >
+                    <v-text-field
+                            label="Add comment"
+                            placeholder="Write something"
+                            v-model="text"
+                            @keyup.enter="save"
+                    />
+                    <v-btn
+                            small
+                            text
+                            @click="save"
+                            :disabled="isEmpty"
+                    >
+                        Add
+                    </v-btn>
+                </v-layout>
+        </v-row>
 </template>
 
 <script>
