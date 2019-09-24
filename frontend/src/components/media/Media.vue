@@ -4,9 +4,9 @@
             <v-img v-if="message.linkCover" :src="message.linkCover" aspect-ratio="2.75"></v-img>
             <v-card-title>
                 <div>
-                    <h5>
+                    <h6>
                         <a :href="message.link">{{message.linkTitle || message.link.slice(0, 30)}}...</a>
-                    </h5>
+                    </h6>
                     <span v-if="message.linkDescription">{{message.linkDescription}}</span>
                 </div>
             </v-card-title>

@@ -15,10 +15,18 @@ export default new Vuex.Store({
     },
     mutations: {
         addMessageMutation(state, message) {
-            state.messages = [
-                ...state.messages,
-                message
-            ]
+            const authorId = message.author.id;
+            const isAuthorActive = state.profile.subscriptions
+                .findIndex(item =>
+                    item.channel.id === authorId && item.active)
+
+            const checkAuthor = state.profile.id === authorId || isAuthorActive > -1
+            if (checkAuthor) {
+                state.messages = [
+                    ...state.messages,
+                    message
+                ]
+            }
         },
         updateMessageMutation(state, message) {
             const updateIndex = state.messages.findIndex(item => item.id === message.id);  // <-- 4
@@ -74,14 +82,14 @@ export default new Vuex.Store({
                 }, /*чтобы уменьшить кол-во дублей передаем на вход обьет,
                 это будет аргумент для первой итерации ->> */ {});
             state.messages = Object.values(targetMessages) // в наш лист мы положим только значения из мапы
-            },
+        },
         updateTotalPagesMutation(state, totalPages) {
             //сохраняем в state количество страниц
             state.totalPages = totalPages
         },
         updateCurrentPageMutation(state, currentPage) {
             //сохраняем в state текущую страницу
-            state.currentPage =  currentPage
+            state.currentPage = currentPage
         }
     },
     actions: {
@@ -103,7 +111,7 @@ export default new Vuex.Store({
             if (index > -1) {
                 commit('updateMessageMutation', data)
             } else {
-                commit('addMessageAction', data)
+                commit('addMessageMutation', data)
             }
         },
         async updateMessageAction({commit}, message) {
@@ -118,7 +126,7 @@ export default new Vuex.Store({
                 commit('removeMessageMutation', message)
             }
         },
-        async addCommentAction ({commit, state}, comment) {
+        async addCommentAction({commit, state}, comment) {
             const result = await commentApi.add(comment);
             const data = await result.json();
 
@@ -127,7 +135,7 @@ export default new Vuex.Store({
         async loadPageAction({commit, state}) {
             //
             const response = await messagesApi.page(state.currentPage + 1);
-            const  data = await response.json();
+            const data = await response.json();
 
             commit('addMessagePageMutation', data.messages);
             commit('updateTotalPagesMutation', data.totalPages);
