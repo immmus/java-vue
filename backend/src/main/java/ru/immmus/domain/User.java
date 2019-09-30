@@ -1,6 +1,7 @@
 package ru.immmus.domain;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -31,6 +32,7 @@ public class User implements Serializable {
     private String name;
     @JsonView(Views.IdName.class)
     private String userPicture;
+    @JsonView(Views.AdminPanel.class)
     private String email;
     @JsonView(Views.FullProfile.class)
     private String gender;
@@ -39,6 +41,21 @@ public class User implements Serializable {
     @JsonView(Views.FullProfile.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", locale = "English")
     private LocalDateTime lastVisit;
+
+
+    @Column(name = "role")
+    @Enumerated(EnumType.STRING)
+    @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
+    @CollectionTable(
+            name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id")
+    )
+    @JsonView(Views.FullProfile.class)
+    private Set<Role> roles;
+
+    @Column(name = "banned", nullable = false, columnDefinition = "bool default false")
+    @JsonView(Views.AdminPanel.class)
+    private boolean isBanned = false;
 
     @JsonView(Views.FullProfile.class)
     @OneToMany(mappedBy = "subscriber", orphanRemoval = true)

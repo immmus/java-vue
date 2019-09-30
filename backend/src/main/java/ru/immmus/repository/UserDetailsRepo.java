@@ -1,5 +1,7 @@
 package ru.immmus.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -14,4 +16,7 @@ public interface UserDetailsRepo extends JpaRepository<User, String> {
     // Благодаря этой аннотации мы будем подгружать "ленивое(Lazy)" поле comments в жадной манере, при вызове данного метода.
     @EntityGraph(attributePaths = { "subscriptions", "subscribers" })
     Optional<User> findById(String s);
+
+    @Override
+    Page<User> findAll(Pageable pageable);
 }

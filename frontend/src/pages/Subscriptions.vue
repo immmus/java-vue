@@ -62,7 +62,7 @@
         components: {UserLink},
         data() {
             return {
-                subscriptions: [],
+                subscriptions: []
             }
         },
         methods: {

@@ -12,8 +12,14 @@
                 А $route.path показывает текущее положение, значит disabled отключает кнопку,
                 когда мы находимся на странице по пути '/' -->
                 <v-btn text
+                       v-if="isAdmin"
+                       :disabled="$route.path === '/admin_panel'"
+                       @click="showAdminPanel">
+                    Admin panel
+                </v-btn>
+                <v-btn text
                        v-if="profile"
-                       :disabled="$route.path === '/' "
+                       :disabled="$route.path === '/'"
                        @click="showMessages">
                     Messages
                 </v-btn>
@@ -29,9 +35,9 @@
                 </v-btn>
             </v-toolbar>
         </div>
-            <v-content>
-                <router-view></router-view>
-            </v-content>
+        <v-content>
+            <router-view></router-view>
+        </v-content>
     </v-app>
 </template>
 
@@ -50,7 +56,18 @@
             bg: false,
             extensionHeight: 48,
         }),
-        computed: mapState(['profile']),
+        computed: {
+            ...mapState({
+                profile: state => state.profile
+            }),
+            isAdmin() {
+                if (profile) {
+                    const isAdmin = profile.roles.findIndex(role => role === 'ADMIN');
+                    return isAdmin > -1
+                }
+            }
+        },
+
         methods: {
             ...mapMutations([
                 'addMessageMutation',
@@ -58,11 +75,14 @@
                 'removeMessageMutation',
                 'addCommentMutation'
             ]),
-            showMessages() {
+             showMessages() {
                 this.$router.push('/')
             },
             showProfile() {
                 this.$router.push('/user')
+            },
+            showAdminPanel() {
+                this.$router.push('/admin_panel')
             }
         },
         created() {

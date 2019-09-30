@@ -46,7 +46,7 @@ public class MainController {
             @AuthenticationPrincipal User user
     ) throws JsonProcessingException {
         HashMap<Object, Object> data = new HashMap<>();
-        if (user != null) {
+        if (user != null && !user.isBanned()) {
             // Т.к. AuthenticationPrincipal - берет пользователя из кэша(сессии), то могут быть какие-нибудь отклонения
             // И поэтому для страховки, возьму его по id из базы.
             final User userFromDb = userDetailsRepo.findById(user.getId()).get();
