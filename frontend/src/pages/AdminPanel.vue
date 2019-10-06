@@ -1,67 +1,101 @@
 <template>
-    <div class="container">
-        <table class="table table-bordered">
-            <thead>
-            <tr>
-                <th> ID</th>
-                <th> Email</th>
-                <th> Last Visit</th>
-                <th> ROLES</th>
-                <th> isBanned</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr v-for="user in users">
-                <td>{{user.id}}</td>
-                <td>{{user.email}}</td>
-                <td>{{user.lastVisit}}</td>
-                <td>{{user.roles}}</td>
-                <td>{{user.isBanned}}</td>
-            </tr>
-            </tbody>
-        </table>
+    <v-card>
+        <v-card-title>
+            Users
+            <div class="flex-grow-1"></div>
+            <v-text-field
+                    v-model="search"
+                    append-icon="search"
+                    label="Search"
+                    single-line
+                    hide-details
+            ></v-text-field>
+        </v-card-title>
+        <v-data-table
+                :headers="headers"
+                :items="users"
+                :search="search"
+        >
+            <template v-slot:item.isBanned="{item}">
+                <v-switch
+                        v-model="item.isBanned"
+                        :label="`${item.isBanned}`"
+                        color="#f50057"
+                        @change="banOrUnban(item.id)"
+                ></v-switch>
+            </template>
+            <template v-slot:item.link="{item}">
+                <user-messages-list
+                        :pageMessages.sync="pageMessages"
+                        :dialog.sync="dialog"
+                ></user-messages-list>
+                <v-btn x-small
+                       color="teal"
+                       @click.stop="getMess(item.id)"
 
-    </div>
+                >open messages</v-btn>
+            </template>
+            <template v-slot:item.userLink="{item}">
+                <user-link
+                        class="user-link"
+                        :user="item"
+                        :creation-date="''"
+                ></user-link>
+            </template>
+        </v-data-table>
+    </v-card>
 </template>
 
 <script>
-    import adminPanel from "../api/adminPanel.js";
+    import {mapActions} from 'vuex'
+    import adminPanel from "../api/adminPanel.js"
+    import UserLink from "../components/UserLink.vue"
+    import UserMessagesList from "../components/adminPanel/UserMessagesList.vue";
 
     export default {
         name: "AdminPanel",
+        components: {UserLink, UserMessagesList},
         data: () => ({
                 headers: [
                     {
-                        text: 'NAME',
+                        text: 'Profile',
                         align: 'left',
                         sortable: false,
-                        value: 'name',
+                        value: 'userLink',
                     },
                     {text: 'ID', value: 'id'},
                     {text: 'Email', value: 'email'},
                     {text: 'Last Visit', value: 'lastVisit'},
                     {text: 'ROLES', value: 'roles'},
-                    {text: 'isBanned', value: 'isBanned'},
+                    {text: 'Banned', value: 'isBanned', sortable: false},
+                    {text: 'Messages', value: 'link', sortable: false}
                 ],
-                users: []
+                dialog: false,
+                pageMessages: [],
+                users: [],
+                search: ''
             }
         ),
+        methods: {
+            ...mapActions(['loadPageMessageForAdmin']),
+            async banOrUnban(userId) {
+                await adminPanel.banOrUnban(userId)
+            },
+            getMess(userId) {
+                this.loadPageMessageForAdmin(userId)
+                this.dialog = true
+            }
+        },
         async beforeMount() {
             const response = await adminPanel.getUsers()
             this.users = response.body.users
-            /*.then(response => JSON.parse(response.body))
-            .forEach(user => this.users.add({
-                id: user.id,
-                name: user.name,
-                email: user.email,
-                last_visit: user.lastVisit,
-                roles: user.roles,
-                banned: user.isBanned
-            }))*/
         }
     }
 </script>
 
 <style scoped>
-
+    .user-link {
+        color: #000 !important;
+        text-decoration: none;
+    }
 </style>

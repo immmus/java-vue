@@ -1,12 +1,13 @@
 <template>
     <v-app>
         <div>
-            <v-toolbar :extended="extended"
-                       :prominent="prominent"
-                       :dense="dense"
-                       :collapse="collapse"
-                       :flat="flat"
-                       :extension-height="extensionHeight">
+            <v-app-bar
+                    :extended="extended"
+                    :prominent="prominent"
+                    :dense="dense"
+                    :collapse="collapse"
+                    :flat="flat"
+                    :extension-height="extensionHeight">
                 <v-toolbar-title>TestVue</v-toolbar-title>
                 <!--двоеточие означает, что мы будем использовать его динамически.
                 А $route.path показывает текущее положение, значит disabled отключает кнопку,
@@ -33,7 +34,7 @@
                 <v-btn v-if="profile" icon href="/logout">
                     <v-icon>exit_to_app</v-icon>
                 </v-btn>
-            </v-toolbar>
+            </v-app-bar>
         </div>
         <v-content>
             <router-view></router-view>
@@ -42,11 +43,12 @@
 </template>
 
 <script>
-    import {mapMutations, mapState} from 'vuex'
+    import {mapMutations, mapGetters, mapState} from 'vuex'
     import {addHandler} from "../util/ws"
 
     export default {
         data: () => ({
+            fixed: true,
             extended: false,
             extendedSlot: false,
             prominent: false,
@@ -57,15 +59,8 @@
             extensionHeight: 48,
         }),
         computed: {
-            ...mapState({
-                profile: state => state.profile
-            }),
-            isAdmin() {
-                if (profile) {
-                    const isAdmin = profile.roles.findIndex(role => role === 'ADMIN');
-                    return isAdmin > -1
-                }
-            }
+            ...mapState({profile: state => state.profile}),
+            ...mapGetters({isAdmin: 'isAdmin'})
         },
 
         methods: {
@@ -75,14 +70,14 @@
                 'removeMessageMutation',
                 'addCommentMutation'
             ]),
-             showMessages() {
+            showMessages() {
                 this.$router.push('/')
             },
             showProfile() {
                 this.$router.push('/user')
             },
             showAdminPanel() {
-                this.$router.push('/admin_panel')
+                this.$router.push('/api/admin_panel')
             }
         },
         created() {
@@ -102,12 +97,10 @@
                             console.error('Looks like the event type if unknown "${data.eventType)}" ')
                     }
                 } else if (data.objectType === 'COMMENT') {
-                    switch (data.eventType) {
-                        case 'CREATE':
-                            this.addCommentMutation(data.body);
-                            break;
-                        default:
-                            console.error('Looks like the event type if unknown "${data.eventType)}" ')
+                    if (data.eventType === 'CREATE') {
+                        this.addCommentMutation(data.body);
+                    } else {
+                        console.error('Looks like the event type if unknown "${data.eventType)}" ')
                     }
                 } else {
                     console.error('looks like object type if unknown "${data.objectType}" ')

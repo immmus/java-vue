@@ -38,7 +38,7 @@ public class MessageController {
                     direction = Sort.Direction.DESC
             ) Pageable pageable
     ) {
-        return messageService.findForUser(pageable, user);
+        return messageService.findAllVisibleMessagesForUser(pageable, user);
     }
 
     @GetMapping("{id}")

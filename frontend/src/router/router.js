@@ -12,7 +12,7 @@ const routes = [
     {path: '/', component: MessagesList},
     {path: '/auth', component: Auth},
     {path: '/subscriptions/:id', component: Subscriptions},
-    {path: '/admin_panel', component: AdminPanel},
+    {path: '/api/admin_panel/', component: AdminPanel},
     /*
     Теперь все URL вида "/user/foo" и "/user/bar" будут соответствовать одному маршруту.
      Для конктретного юзера его профиль будет отображаться по "/user", но для остальных пользователей, чтобы перейти в его профиль

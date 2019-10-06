@@ -1,17 +1,25 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import messagesApi from '../api/messages.js';
-import commentApi from '../api/comment.js';
+import messagesApi from '../api/messages.js'
+import commentApi from '../api/comment.js'
+import adminPanel from "../api/adminPanel.js"
 
 Vue.use(Vuex);
 export default new Vuex.Store({
     state: {
+        userId: null,
         messages,
         profile,
         ...frontendData
     },
     getters: {
-        sortedMessages: state => (state.messages || []).sort((a, b) => -(a.id - b.id))
+        sortedMessages: state => (state.messages || []).sort((a, b) => -(a.id - b.id)),
+        isAdmin() {
+            if (profile) {
+                const isAdmin = profile.roles.findIndex(role => role === 'ADMIN');
+                return isAdmin > -1
+            }
+        }
     },
     mutations: {
         addMessageMutation(state, message) {
@@ -68,6 +76,9 @@ export default new Vuex.Store({
                 ]
             }
         },
+        addMessagePageMutationForAdmin(state, messages){
+            state.messages = Object.values(messages)
+        },
         addMessagePageMutation(state, message) {
             // Создаем мапу targetMessages
             // Для того чтобы убрать дубликаты сообщений, которые могут появится.
@@ -100,7 +111,7 @@ export default new Vuex.Store({
                      const index = this.messages.findIndex(item => item.id === data.id);
                        if (index > -1) {
                          this.messages.splice(index, 1, data)
-                     } else {
+                     } else {ч
                          this.messages.push(data)
                      }
                  }))  Это равняется тому, что написанно ниже, только писать async уже не надо. Оставил для примера*/
@@ -132,9 +143,8 @@ export default new Vuex.Store({
 
             commit('addCommentMutation', data)
         },
-        async loadPageAction({commit, state}) {
-            //
-            const response = await messagesApi.page(state.currentPage + 1);
+        async loadPageAction({commit, state}, api) {
+            const response = await api.page(state.currentPage + 1, state.userId);
             const data = await response.json();
 
             commit('addMessagePageMutation', data.messages);
@@ -142,6 +152,15 @@ export default new Vuex.Store({
             // берем мимнимум из этих значений, для того чтобы не накрутить currentPage больше totalPages
             // ведь мы постоянно крутим странички +1
             commit('updateCurrentPageMutation', Math.min(data.currentPage, data.totalPages - 1))
+        },
+        async loadPageMessageForAdmin({commit, state}, userId) {
+            state.userId = userId
+            const response = await adminPanel.page({}, userId);
+            const data = await response.json();
+
+            commit('addMessagePageMutationForAdmin', data.messages);
+            commit('updateTotalPagesMutation', data.totalPages);
+            commit('updateCurrentPageMutation', 0)
         }
     }
 })

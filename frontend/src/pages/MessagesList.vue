@@ -16,7 +16,7 @@
     import {mapGetters} from 'vuex'
     import MessageRow from '../components/messages/MessageRow.vue'
     import MessageForm from '../components/messages/MessageForm.vue'
-    import LazyLoader from "../components/LazyLoader.vue";
+    import LazyLoader from '../components/LazyLoader.vue'
 
     export default {
         computed: mapGetters(['sortedMessages']),
@@ -33,7 +33,7 @@
         methods: {
             editMessage(message) {
                 this.message = message
-            },
+            }
         }
     }
 </script>

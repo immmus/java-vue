@@ -81,6 +81,10 @@
                     ...this.subscriptions.slice(subscriptionIndex + 1)
                 ]
             },
+            async loadSubscriptions() {
+                const resp = await profileApi.subscriberList(this.$store.state.profile.id)
+                this.subscriptions = await resp.json()
+            },
             close() {
                 // обновляем диалоговое окно
                 this.$emit('update:dialog', false)
@@ -88,8 +92,7 @@
         },
         // async потому что дергаем api
         async beforeMount() {
-            const resp = await profileApi.subscriberList(this.$store.state.profile.id)
-            this.subscriptions = await resp.json()
+            this.loadSubscriptions()
         }
     }
 </script>

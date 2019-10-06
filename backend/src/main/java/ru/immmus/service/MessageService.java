@@ -9,10 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
-import ru.immmus.domain.Message;
-import ru.immmus.domain.User;
-import ru.immmus.domain.UserSubscription;
-import ru.immmus.domain.Views;
+import ru.immmus.domain.*;
 import ru.immmus.dto.EventType;
 import ru.immmus.dto.MessagePageDto;
 import ru.immmus.dto.MetaDto;
@@ -23,6 +20,8 @@ import ru.immmus.util.WsSender;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.regex.Matcher;
@@ -66,10 +65,19 @@ public class MessageService {
         return createdMessage;
     }
 
-    public MessagePageDto findForUser(Pageable pageable, User user) {
+    public MessagePageDto getMessagesCurrentUser(Pageable pageable, User user) {
+        Page<Message> page = messageRepository.findByAuthorIn(List.of(user), pageable);
+        return new MessagePageDto(
+                page.getContent(),
+                pageable.getPageNumber(),
+                page.getTotalPages()
+        );
+    }
+
+    public MessagePageDto findAllVisibleMessagesForUser(Pageable pageable, User user) {
         // Т.к. нашего текущего юзера мы получаем через AuthenticationPrincipal, то получаем его из сессии
         // и там могут быть проблемы с актуальностью данных, поэтому вместо того чтобы получаеть список каналов
-        // через - user.getSubscribers(), мы снова перестрахуемся и получим из из базы
+        // через - user.getSubscribers(), мы снова перестрахуемся и получим их из базы
         Set<User> channels = userSubscriptionRepo.findBySubscriber(user)
                 .stream()
                 // Отфильтровываем всех у кого не подтверждена подписка, чтобы не выводить его сообщения
