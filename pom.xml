@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.1.8.RELEASE</version>
+        <version>2.2.6.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -15,15 +15,21 @@
     <url>https://github.com/immmus/java-vue</url>
 
 <modules>
-    <module>backend</module>
     <module>frontend</module>
+    <module>backend</module>
 </modules>
     <properties>
+        <!--backend-->
         <java.version>11</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <spring.boot.version>2.1.8.RELEASE</spring.boot.version>
-        <projectlombok.version>1.18.10</projectlombok.version>
+        <spring.boot.version>2.2.6.RELEASE</spring.boot.version>
+        <projectlombok.version>1.18.12</projectlombok.version>
         <postgresql.version>42.2.8</postgresql.version>
+        <jsoup.version>1.13.1</jsoup.version>
+        <!--frontend-->
+        <nodejs.version>13.12.0</nodejs.version>
+        <yarn.version>1.22.4</yarn.version>
+        <frontend-maven-plugin.version>1.9.1</frontend-maven-plugin.version>
     </properties>
 </project>
