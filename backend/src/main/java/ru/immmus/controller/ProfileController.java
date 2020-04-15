@@ -3,11 +3,13 @@ package ru.immmus.controller;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 import ru.immmus.domain.User;
 import ru.immmus.domain.UserSubscription;
 import ru.immmus.domain.Views;
 import ru.immmus.service.ProfileService;
+import ru.immmus.service.UserService;
 
 import java.util.List;
 
@@ -15,10 +17,12 @@ import java.util.List;
 @RequestMapping("profile")
 public class ProfileController {
     private final ProfileService profileService;
+    private final UserService userService;
 
     @Autowired
-    public ProfileController(ProfileService profileService) {
+    public ProfileController(ProfileService profileService, UserService userService) {
         this.profileService = profileService;
+        this.userService = userService;
     }
 
     @GetMapping("{id}")
@@ -30,9 +34,10 @@ public class ProfileController {
     @PostMapping("change-subscription/{channelId}")
     @JsonView(Views.FullProfile.class)
     public User changeSubscription(
-            @AuthenticationPrincipal User subscriber,
+            @AuthenticationPrincipal OAuth2User oAuth2User,
             @PathVariable("channelId") User channel
     ) {
+        User subscriber = userService.getAuthUser(oAuth2User);
         if (subscriber.equals(channel)) {
             return channel;
         } else {
@@ -53,9 +58,10 @@ public class ProfileController {
     @JsonView(Views.IdName.class)
     //метод возвращает все подписки текущего пользователя
     public UserSubscription changeSubscriptionStatus(
-            @AuthenticationPrincipal User channel,
+            @AuthenticationPrincipal OAuth2User oAuth2User,
             @PathVariable("subscriberId") User subscriber
     ) {
+        User channel = userService.getAuthUser(oAuth2User);
         return profileService.changeSubscriptionStatus(channel, subscriber);
     }
 }
